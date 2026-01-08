@@ -6,17 +6,18 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const classroomId = decodeURIComponent(params.id)
     const { studentId, toolType, data } = await request.json()
     if (!studentId || !toolType) {
       return NextResponse.json({ error: 'Student ID and tool type required' }, { status: 400 })
     }
-    
-    const success = updateStudentResponse(params.id, studentId, toolType, data)
+
+    const success = updateStudentResponse(classroomId, studentId, toolType, data)
     if (!success) {
       return NextResponse.json({ error: 'Failed to update response' }, { status: 404 })
     }
-    
-    const classroom = getClassroom(params.id)
+
+    const classroom = getClassroom(classroomId)
     return NextResponse.json({ success, classroom })
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update student response' }, { status: 500 })

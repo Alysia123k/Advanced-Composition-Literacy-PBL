@@ -74,7 +74,14 @@ export function createClassroom(teacherName: string): Classroom {
 }
 
 export function getClassroom(classroomId: string): Classroom | undefined {
-  return classrooms.get(classroomId)
+  console.log(`[Store] Getting classroom by ID: "${classroomId}"`)
+  console.log(`[Store] Available classroom IDs:`, Array.from(classrooms.keys()))
+  const classroom = classrooms.get(classroomId)
+  console.log(`[Store] Classroom found:`, !!classroom)
+  if (classroom) {
+    console.log(`[Store] Classroom details: ID=${classroom.classroomId}, Teacher=${classroom.teacherName}, JoinCode=${classroom.joinCode}`)
+  }
+  return classroom
 }
 
 export function getClassroomByCode(joinCode: string): Classroom | undefined {

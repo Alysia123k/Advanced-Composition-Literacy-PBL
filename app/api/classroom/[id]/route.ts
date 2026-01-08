@@ -9,12 +9,17 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const classroom = getClassroom(params.id)
+    console.log('[API] Getting classroom by ID:', params.id)
+    const classroomId = decodeURIComponent(params.id)
+    console.log('[API] Decoded classroom ID:', classroomId)
+    const classroom = getClassroom(classroomId)
+    console.log('[API] Classroom found:', !!classroom)
     if (!classroom) {
       return NextResponse.json({ error: 'Classroom not found' }, { status: 404 })
     }
     return NextResponse.json(classroom)
   } catch (error) {
+    console.error('[API] Error getting classroom:', error)
     return NextResponse.json({ error: 'Failed to get classroom' }, { status: 500 })
   }
 }
