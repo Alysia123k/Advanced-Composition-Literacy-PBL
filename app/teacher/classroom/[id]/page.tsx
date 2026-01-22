@@ -63,10 +63,10 @@ export default function TeacherClassroomPage() {
 
     // Initial load
     loadClassroom(true)
-    // Refresh every second (but don't show errors on refresh failures)
+    // Refresh every couple seconds (but don't show errors on refresh failures)
     const interval = setInterval(() => {
       loadClassroom(false)
-    }, 1000)
+    }, 2000)
 
     const socket = getSocket()
     socket.emit('join-classroom', { classroomId, role: 'teacher' })

@@ -42,7 +42,7 @@ export default function StudentClassroomPage() {
     }
 
     loadData()
-    const interval = setInterval(loadData, 1000)
+    const interval = setInterval(loadData, 2000)
 
     const socket = getSocket()
     socket.emit('join-classroom', { classroomId, role: 'student', studentId })
