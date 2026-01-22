@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createGroups, updateGroups, getClassroom } from '@/lib/store'
 
+declare global {
+  var io: any
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -26,10 +30,14 @@ export async function POST(
     }
 
     const classroom = getClassroom(classroomId)
+
+    // Emit socket event to notify clients of group changes
+    if (global.io) {
+      global.io.to(`classroom-${classroomId}`).emit('groups-changed')
+    }
+
     return NextResponse.json({ success: true, classroom })
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update groups' }, { status: 500 })
   }
 }
-
-

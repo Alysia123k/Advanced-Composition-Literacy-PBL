@@ -135,8 +135,6 @@ export default function TeacherClassroomPage() {
       if (response.ok) {
         const { classroom: updated } = await response.json()
         setClassroom(updated)
-        const socket = getSocket()
-        socket.emit('tool-toggled', { classroomId, toolType })
         setRefreshKey(prev => prev + 1)
       }
     } catch (error) {
@@ -154,8 +152,6 @@ export default function TeacherClassroomPage() {
       if (response.ok) {
         const { classroom: updated } = await response.json()
         setClassroom(updated)
-        const socket = getSocket()
-        socket.emit('research-link-added', { classroomId })
       }
     } catch (error) {
       console.error('Failed to add research link:', error)
@@ -371,8 +367,6 @@ export default function TeacherClassroomPage() {
                         if (response.ok) {
                           const { classroom: updated } = await response.json()
                           setClassroom(updated)
-                          const socket = getSocket()
-                          socket.emit('question-updated', { classroomId })
                         }
                       } catch (error) {
                         console.error('Failed to add question:', error)
@@ -388,8 +382,6 @@ export default function TeacherClassroomPage() {
                         if (response.ok) {
                           const { classroom: updated } = await response.json()
                           setClassroom(updated)
-                          const socket = getSocket()
-                          socket.emit('question-updated', { classroomId })
                         }
                       } catch (error) {
                         console.error('Failed to edit question:', error)
@@ -405,8 +397,6 @@ export default function TeacherClassroomPage() {
                         if (response.ok) {
                           const { classroom: updated } = await response.json()
                           setClassroom(updated)
-                          const socket = getSocket()
-                          socket.emit('question-updated', { classroomId })
                         }
                       } catch (error) {
                         console.error('Failed to delete question:', error)
@@ -459,9 +449,6 @@ export default function TeacherClassroomPage() {
                   if (response.ok) {
                     const { classroom: updated } = await response.json()
                     setClassroom(updated)
-                    const socket = getSocket()
-                    socket.emit('question-asked', { classroomId, studentId })
-                    socket.emit('question-updated', { classroomId })
                   }
                 } catch (error) {
                   console.error('Failed to answer question:', error)

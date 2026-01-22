@@ -4,8 +4,8 @@ const next = require('next')
 const { Server } = require('socket.io')
 
 const dev = process.env.NODE_ENV !== 'production'
-const hostname = 'localhost'
-const port = 3000
+const hostname = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost'
+const port = process.env.PORT || 3000
 
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
@@ -28,6 +28,9 @@ app.prepare().then(() => {
       methods: ['GET', 'POST'],
     },
   })
+
+  // Make io instance globally available for API routes
+  global.io = io
 
   io.on('connection', (socket) => {
     console.log('Client connected:', socket.id)
@@ -81,5 +84,3 @@ app.prepare().then(() => {
       console.log(`> Ready on http://${hostname}:${port}`)
     })
 })
-
-

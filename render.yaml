@@ -1,23 +1,12 @@
 services:
-  # Backend Service
+  # Combined Frontend and Socket Service
   - type: web
-    name: pbl-backend
+    name: advanced-composition-literacy-pbl
     runtime: node
-    rootDir: server
     buildCommand: npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-
-  # Frontend Service (optional - if you want both on Render)
-  - type: web
-    name: pbl-frontend
-    runtime: node
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
       - key: NEXT_PUBLIC_SOCKET_URL
-        value: https://pbl-backend.onrender.com
+        value: https://advanced-composition-literacy-pbl.onrender.com
