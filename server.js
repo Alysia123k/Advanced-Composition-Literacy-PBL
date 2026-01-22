@@ -42,9 +42,7 @@ app.prepare().then(() => {
       }
     })
 
-    socket.on('student-joined', ({ classroomId }) => {
-      socket.to(`classroom-${classroomId}`).emit('student-list-updated')
-    })
+
 
     socket.on('tool-toggled', ({ classroomId, toolType }) => {
       socket.to(`classroom-${classroomId}`).emit('tool-updated', { toolType })

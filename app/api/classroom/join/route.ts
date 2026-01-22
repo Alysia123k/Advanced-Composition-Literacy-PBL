@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getClassroomByCode, addStudent, getAllClassrooms } from '@/lib/store'
 
+declare global {
+  var io: any
+}
+
 // Force Node.js runtime to ensure in-memory store persists
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -38,13 +42,17 @@ export async function POST(request: NextRequest) {
     if (!student) {
       return NextResponse.json({ error: 'Student name already exists' }, { status: 409 })
     }
-    
+
     console.log('[API] Student added successfully:', student.studentId)
-    
+
+    // Emit socket event to notify clients of the new student
+    if (global.io) {
+      global.io.to(`classroom-${classroom.classroomId}`).emit('student-list-updated')
+    }
+
     return NextResponse.json({ classroom, student })
   } catch (error) {
     console.error('[API] Join error:', error)
     return NextResponse.json({ error: 'Failed to join classroom' }, { status: 500 })
   }
 }
-
