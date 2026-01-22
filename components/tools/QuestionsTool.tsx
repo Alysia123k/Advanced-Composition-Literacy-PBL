@@ -27,7 +27,7 @@ export default function QuestionsTool({ student, classroom, onUpdate }: Question
 
     // Preserve existing student questions (private questions to teacher)
     const existingStudentQuestions = (student.responses.questions || []).filter(
-      (q: any) => !classroom.questions.some(tq => tq.id === q.id)
+      (q: any) => !classroom.questions.some((tq: { id: string; question: string; timestamp: number }) => tq.id === q.id)
     )
 
     // Update student responses - merge teacher questions with existing student questions
@@ -72,5 +72,3 @@ export default function QuestionsTool({ student, classroom, onUpdate }: Question
     </div>
   )
 }
-
-
