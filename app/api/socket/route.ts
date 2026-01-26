@@ -4,5 +4,3 @@ import { Server as HTTPServer } from 'http'
 
 // This will be handled by a custom server file
 export const dynamic = 'force-dynamic'
-
-
