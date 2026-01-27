@@ -16,7 +16,7 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        {student.name}'s Responses
+        {student.name}&#39;s Responses
       </h2>
       <div className="space-y-6">
         {activeTools.map((toolType) => {
@@ -69,5 +69,3 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
     </div>
   )
 }
-
-

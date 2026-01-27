@@ -197,7 +197,7 @@ export default function TeacherClassroomPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                {classroom.teacherName}'s Classroom
+                {classroom.teacherName}&#39;s Classroom
               </h1>
               <p className="text-gray-600">
                 Join Code: <span className="font-mono font-bold text-lg">{classroom.joinCode}</span>
@@ -212,7 +212,7 @@ export default function TeacherClassroomPage() {
                     let content = `
                       <html>
                         <head>
-                          <title>${selectedStudent.name}'s Work</title>
+                          <title>${selectedStudent.name}&#39;s Work</title>
                           <style>
                             body { font-family: Arial, sans-serif; padding: 20px; }
                             h1 { color: #333; }
@@ -226,7 +226,7 @@ export default function TeacherClassroomPage() {
                           </style>
                         </head>
                         <body>
-                          <h1>${selectedStudent.name}'s Work</h1>
+                          <h1>${selectedStudent.name}&#39;s Work</h1>
                           <div class="timestamp">Generated: ${timestamp}</div>
                     `
                     
