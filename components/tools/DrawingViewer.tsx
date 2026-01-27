@@ -30,6 +30,7 @@ export default function DrawingViewer({ imageData }: DrawingViewerProps) {
     <div>
       <h3 className="text-lg font-bold text-gray-800 mb-4">Drawing</h3>
       <div className="border-2 border-gray-300 rounded-lg overflow-hidden inline-block mb-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={currentData.image}
           alt="Student drawing"

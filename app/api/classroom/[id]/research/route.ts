@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addResearchLink, removeResearchLink, getClassroom } from '@/lib/store'
+import { handleApiProxy } from '@/lib/api-proxy'
 
 declare global {
   var io: any
@@ -9,7 +10,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  try {
+  return handleApiProxy(request, async () => {
     const classroomId = decodeURIComponent(params.id)
     const { url, action } = await request.json()
     if (!url) {
@@ -35,7 +36,5 @@ export async function POST(
     }
 
     return NextResponse.json({ success, classroom })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update research links' }, { status: 500 })
-  }
+  })
 }
