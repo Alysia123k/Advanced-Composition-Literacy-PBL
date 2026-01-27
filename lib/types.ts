@@ -41,6 +41,12 @@ export interface Student {
   }
 }
 
+export interface ClassroomQuestion {
+  id: string
+  question: string
+  timestamp: number
+}
+
 export interface Classroom {
   classroomId: string
   teacherName: string
@@ -52,11 +58,7 @@ export interface Classroom {
     studentIds: string[]
   }>
   researchLinks: string[]
-  questions: Array<{
-    id: string
-    question: string
-    timestamp: number
-  }>
+  questions: ClassroomQuestion[]
 }
 
 export type ToolType =
