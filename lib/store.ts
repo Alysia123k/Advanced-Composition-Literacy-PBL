@@ -6,11 +6,19 @@ import path from 'path'
 // File path for persistence
 const STORE_FILE = path.join(process.cwd(), 'classrooms.json')
 
-// In-memory storage
-const classrooms = new Map<string, Classroom>()
+// File-based storage - read/write on every operation for multi-instance support
+let classroomsCache: Map<string, Classroom> | null = null
+let cacheTimestamp = 0
+const CACHE_DURATION = 1000 // 1 second cache
 
 // Load classrooms from file
-function loadClassrooms() {
+function loadClassrooms(): Map<string, Classroom> {
+  const now = Date.now()
+  if (classroomsCache && (now - cacheTimestamp) < CACHE_DURATION) {
+    return classroomsCache
+  }
+
+  const classrooms = new Map<string, Classroom>()
   try {
     if (fs.existsSync(STORE_FILE)) {
       const data = fs.readFileSync(STORE_FILE, 'utf8')
@@ -23,27 +31,32 @@ function loadClassrooms() {
   } catch (error) {
     console.error('[Store] Error loading classrooms:', error)
   }
+
+  classroomsCache = classrooms
+  cacheTimestamp = now
+  return classrooms
 }
 
 // Save classrooms to file
-function saveClassrooms() {
+function saveClassrooms(classrooms: Map<string, Classroom>) {
   try {
     const classroomsData = Object.fromEntries(classrooms)
     fs.writeFileSync(STORE_FILE, JSON.stringify(classroomsData, null, 2))
+    classroomsCache = new Map(classrooms) // Update cache
+    cacheTimestamp = Date.now()
   } catch (error) {
     console.error('[Store] Error saving classrooms:', error)
   }
 }
 
-// Load on module import
-loadClassrooms()
-
 // Debug function to get all classrooms (development only)
 export function getAllClassrooms(): Classroom[] {
+  const classrooms = loadClassrooms()
   return Array.from(classrooms.values())
 }
 
 export function createClassroom(teacherName: string): Classroom {
+  const classrooms = loadClassrooms()
   const classroomId = uuidv4()
   // Generate a unique 6-character uppercase alphanumeric code
   let joinCode = ''
@@ -68,12 +81,13 @@ export function createClassroom(teacherName: string): Classroom {
   }
 
   classrooms.set(classroomId, classroom)
-  saveClassrooms()
+  saveClassrooms(classrooms)
   console.log(`[Store] Created classroom: ${classroomId}, Join Code: ${joinCode}, Total classrooms: ${classrooms.size}`)
   return classroom
 }
 
 export function getClassroom(classroomId: string): Classroom | undefined {
+  const classrooms = loadClassrooms()
   console.log(`[Store] Getting classroom by ID: "${classroomId}"`)
   console.log(`[Store] Available classroom IDs:`, Array.from(classrooms.keys()))
   const classroom = classrooms.get(classroomId)
@@ -85,6 +99,7 @@ export function getClassroom(classroomId: string): Classroom | undefined {
 }
 
 export function getClassroomByCode(joinCode: string): Classroom | undefined {
+  const classrooms = loadClassrooms()
   const normalizedCode = joinCode.toUpperCase().trim()
   console.log(`[Store] Looking for join code: "${normalizedCode}", Total classrooms: ${classrooms.size}`)
   for (const classroom of Array.from(classrooms.values())) {
@@ -99,22 +114,23 @@ export function getClassroomByCode(joinCode: string): Classroom | undefined {
 }
 
 export function addStudent(classroomId: string, studentName: string): Student | null {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return null
 
   // Check for duplicate names
-  if (classroom.students.some(s => s.name.toLowerCase() === studentName.toLowerCase())) {
+  if (classroom.students.some((s: Student) => s.name.toLowerCase() === studentName.toLowerCase())) {
     return null
   }
-  
+
   const student: Student = {
     studentId: uuidv4(),
     name: studentName,
     responses: {},
   }
-  
+
   classroom.students.push(student)
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return student
 }
 
@@ -124,12 +140,13 @@ export function updateStudentResponse(
   toolType: string,
   data: any
 ) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
-  const student = classroom.students.find(s => s.studentId === studentId)
+
+  const student = classroom.students.find((s: Student) => s.studentId === studentId)
   if (!student) return false
-  
+
   // Handle different tool types appropriately
   if (toolType === 'questions') {
     // For questions, replace the entire array (it's already a complete array from the tool)
@@ -144,15 +161,16 @@ export function updateStudentResponse(
     }
     Object.assign((student.responses as any)[toolType], data)
   }
-  
-  saveClassrooms()
+
+  saveClassrooms(classrooms)
   return true
 }
 
 export function toggleTool(classroomId: string, toolType: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
+
   const index = classroom.activeTools.indexOf(toolType)
   if (index > -1) {
     classroom.activeTools.splice(index, 1)
@@ -160,14 +178,15 @@ export function toggleTool(classroomId: string, toolType: string) {
     classroom.activeTools.push(toolType)
   }
   // Persist tool changes so they survive server restarts
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function createGroups(classroomId: string, groupSize: number, random: boolean = true) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
+
   const students = [...classroom.students]
   if (random) {
     // Shuffle array
@@ -176,66 +195,70 @@ export function createGroups(classroomId: string, groupSize: number, random: boo
       [students[i], students[j]] = [students[j], students[i]]
     }
   }
-  
+
   classroom.groups = []
   for (let i = 0; i < students.length; i += groupSize) {
     const group = students.slice(i, i + groupSize)
     const groupId = uuidv4()
     classroom.groups.push({
       groupId,
-      studentIds: group.map(s => s.studentId),
+      studentIds: group.map((s: Student) => s.studentId),
     })
-    group.forEach(student => {
+    group.forEach((student: Student) => {
       student.groupId = groupId
     })
   }
-  
+
   // Persist group changes
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function updateGroups(classroomId: string, groups: Array<{ groupId: string; studentIds: string[] }>) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
+
   classroom.groups = groups
-  classroom.students.forEach(student => {
+  classroom.students.forEach((student: Student) => {
     const group = groups.find(g => g.studentIds.includes(student.studentId))
     student.groupId = group?.groupId
   })
-  
+
   // Persist manual group updates
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function addResearchLink(classroomId: string, url: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
+
   if (!classroom.researchLinks.includes(url)) {
     classroom.researchLinks.push(url)
   }
   // Persist research link changes
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function removeResearchLink(classroomId: string, url: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
-  
+
   const index = classroom.researchLinks.indexOf(url)
   if (index > -1) {
     classroom.researchLinks.splice(index, 1)
   }
   // Persist research link removal
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function addTeacherQuestion(classroomId: string, question: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
 
@@ -244,65 +267,69 @@ export function addTeacherQuestion(classroomId: string, question: string) {
     question,
     timestamp: Date.now(),
   })
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function editTeacherQuestion(classroomId: string, questionId: string, question: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
 
-  const questionIndex = classroom.questions.findIndex(q => q.id === questionId)
+  const questionIndex = classroom.questions.findIndex((q: any) => q.id === questionId)
   if (questionIndex === -1) return false
 
   classroom.questions[questionIndex].question = question
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function deleteTeacherQuestion(classroomId: string, questionId: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
 
-  const questionIndex = classroom.questions.findIndex(q => q.id === questionId)
+  const questionIndex = classroom.questions.findIndex((q: any) => q.id === questionId)
   if (questionIndex === -1) return false
 
   classroom.questions.splice(questionIndex, 1)
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function answerTeacherQuestion(classroomId: string, studentId: string, questionId: string, answer: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
 
-  const student = classroom.students.find(s => s.studentId === studentId)
+  const student = classroom.students.find((s: Student) => s.studentId === studentId)
   if (!student) return false
 
   if (!student.responses.questions) {
     student.responses.questions = []
   }
 
-  const existingAnswer = student.responses.questions.find(q => q.id === questionId)
+  const existingAnswer = student.responses.questions.find((q: any) => q.id === questionId)
   if (existingAnswer) {
     existingAnswer.answer = answer
   } else {
     student.responses.questions.push({
       id: questionId,
-      question: classroom.questions.find(q => q.id === questionId)?.question || '',
+      question: classroom.questions.find((q: any) => q.id === questionId)?.question || '',
       answer,
       timestamp: Date.now(),
     })
   }
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
 
 export function addStudentQuestion(classroomId: string, studentId: string, question: string) {
+  const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return false
 
-  const student = classroom.students.find(s => s.studentId === studentId)
+  const student = classroom.students.find((s: Student) => s.studentId === studentId)
   if (!student) return false
 
   if (!student.responses.questions) {
@@ -316,6 +343,6 @@ export function addStudentQuestion(classroomId: string, studentId: string, quest
     timestamp: Date.now(),
   })
 
-  saveClassrooms()
+  saveClassrooms(classrooms)
   return true
 }
