@@ -12,7 +12,13 @@ const io = new Server(server, {
   },
 });
 
+<<<<<<< HEAD
 app.use(cors());
+=======
+app.use(cors({
+  origin: "*"
+}));
+>>>>>>> master
 app.use(express.json());
 
 // Socket.IO event handlers

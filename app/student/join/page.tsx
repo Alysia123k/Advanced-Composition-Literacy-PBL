@@ -46,7 +46,10 @@ export default function StudentJoinPage() {
         role: 'student',
         studentId: student.studentId,
       })
+<<<<<<< HEAD
       socket.emit('student-joined', { classroomId: classroom.classroomId })
+=======
+>>>>>>> master
 
       router.push(`/student/classroom/${classroom.classroomId}?studentId=${student.studentId}`)
     } catch (error) {
@@ -105,4 +108,7 @@ export default function StudentJoinPage() {
     </div>
   )
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> master

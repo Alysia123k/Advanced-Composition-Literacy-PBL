@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addTeacherQuestion, editTeacherQuestion, deleteTeacherQuestion, answerTeacherQuestion, addStudentQuestion, getClassroom } from '@/lib/store'
+<<<<<<< HEAD
+=======
+import { handleApiProxy } from '@/lib/api-proxy'
+
+declare global {
+  var io: any
+}
+>>>>>>> master
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+<<<<<<< HEAD
   try {
+=======
+  return handleApiProxy(request, async () => {
+    const classroomId = decodeURIComponent(params.id)
+>>>>>>> master
     const { studentId, question, questionId, answer, action } = await request.json()
 
     let success = false
     if (action === 'add' && question) {
       // Teacher adding a question for students
+<<<<<<< HEAD
       success = addTeacherQuestion(params.id, question)
     } else if (action === 'edit' && questionId && question) {
       // Teacher editing a question
@@ -27,6 +41,24 @@ export async function POST(
     } else if (!action && studentId && question) {
       // Backward compatibility: if no action but has studentId and question, treat as student question
       success = addStudentQuestion(params.id, studentId, question)
+=======
+      success = addTeacherQuestion(classroomId, question)
+    } else if (action === 'edit' && questionId && question) {
+      // Teacher editing a question
+      success = editTeacherQuestion(classroomId, questionId, question)
+    } else if (action === 'delete' && questionId) {
+      // Teacher deleting a question
+      success = deleteTeacherQuestion(classroomId, questionId)
+    } else if (action === 'answer' && questionId && answer && studentId) {
+      // Teacher answering a student's question
+      success = answerTeacherQuestion(classroomId, studentId, questionId, answer)
+    } else if (action === 'student-question' && studentId && question) {
+      // Student asking a private question to teacher
+      success = addStudentQuestion(classroomId, studentId, question)
+    } else if (!action && studentId && question) {
+      // Backward compatibility: if no action but has studentId and question, treat as student question
+      success = addStudentQuestion(classroomId, studentId, question)
+>>>>>>> master
     } else {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
@@ -35,6 +67,7 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to process question' }, { status: 404 })
     }
 
+<<<<<<< HEAD
     const classroom = getClassroom(params.id)
     return NextResponse.json({ success, classroom })
   } catch (error) {
@@ -43,3 +76,26 @@ export async function POST(
 }
 
 
+=======
+    const classroom = getClassroom(classroomId)
+
+    // Emit appropriate socket events
+    if (global.io) {
+      if (action === 'add' || action === 'edit' || action === 'delete') {
+        // Teacher modified questions - notify all clients
+        global.io.to(`classroom-${classroomId}`).emit('question-updated')
+      } else if (action === 'student-question' || (!action && studentId && question)) {
+        // Student asked a question - notify teacher
+        global.io.to(`classroom-${classroomId}`).emit('question-asked', { studentId })
+        global.io.to(`classroom-${classroomId}`).emit('question-updated')
+      } else if (action === 'answer') {
+        // Teacher answered a question - notify the student and all clients
+        global.io.to(`student-${studentId}`).emit('question-answered', { questionId, answer })
+        global.io.to(`classroom-${classroomId}`).emit('question-updated')
+      }
+    }
+
+    return NextResponse.json({ success, classroom })
+  })
+}
+>>>>>>> master

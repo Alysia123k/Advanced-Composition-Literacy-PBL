@@ -38,4 +38,12 @@ classrooms.json
 *.tsbuildinfo
 next-env.d.ts
 
+<<<<<<< HEAD
+=======
+node_modules
+.env
+.env.local
+dist
+
+>>>>>>> master
 

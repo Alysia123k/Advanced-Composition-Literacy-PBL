@@ -1,0 +1,12 @@
+services:
+  # Combined Frontend and Socket Service
+  - type: web
+    name: advanced-composition-literacy-pbl
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SOCKET_URL
+        value: https://advanced-composition-literacy-pbl.onrender.com

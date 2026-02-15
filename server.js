@@ -4,8 +4,13 @@ const next = require('next')
 const { Server } = require('socket.io')
 
 const dev = process.env.NODE_ENV !== 'production'
+<<<<<<< HEAD
 const hostname = 'localhost'
 const port = 3000
+=======
+const hostname = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost'
+const port = process.env.PORT || 3000
+>>>>>>> master
 
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
@@ -29,6 +34,12 @@ app.prepare().then(() => {
     },
   })
 
+<<<<<<< HEAD
+=======
+  // Make io instance globally available for API routes
+  global.io = io
+
+>>>>>>> master
   io.on('connection', (socket) => {
     console.log('Client connected:', socket.id)
 
@@ -39,9 +50,13 @@ app.prepare().then(() => {
       }
     })
 
+<<<<<<< HEAD
     socket.on('student-joined', ({ classroomId }) => {
       socket.to(`classroom-${classroomId}`).emit('student-list-updated')
     })
+=======
+
+>>>>>>> master
 
     socket.on('tool-toggled', ({ classroomId, toolType }) => {
       socket.to(`classroom-${classroomId}`).emit('tool-updated', { toolType })
@@ -81,5 +96,8 @@ app.prepare().then(() => {
       console.log(`> Ready on http://${hostname}:${port}`)
     })
 })
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
