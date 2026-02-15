@@ -21,6 +21,7 @@ export default function TeacherClassroomPage() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'tools' | 'curriculum'>('tools')
+  const [showTutorial, setShowTutorial] = useState(false)
   const hasLoadedOnceRef = useRef(false)
 
   useEffect(() => {
@@ -63,10 +64,10 @@ export default function TeacherClassroomPage() {
 
     // Initial load
     loadClassroom(true)
-    // Refresh every couple seconds (but don't show errors on refresh failures)
+    // Refresh frequently so teachers see student activity in near real-time
     const interval = setInterval(() => {
       loadClassroom(false)
-    }, 2000)
+    }, 500)
 
     const socket = getSocket()
     socket.emit('join-classroom', { classroomId, role: 'teacher' })
@@ -194,7 +195,7 @@ export default function TeacherClassroomPage() {
       
       <div className="flex-1 flex flex-col">
         <div className="bg-white border-b p-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
                 {classroom.teacherName}&#39;s Classroom
@@ -203,7 +204,15 @@ export default function TeacherClassroomPage() {
                 Join Code: <span className="font-mono font-bold text-lg">{classroom.joinCode}</span>
               </p>
             </div>
-            {selectedStudent && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowTutorial((v) => !v)}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 font-medium text-sm"
+              >
+                {showTutorial ? 'Hide Tutorial' : 'Tutorial'}
+              </button>
+              {selectedStudent && (
               <button
                 onClick={() => {
                   const printWindow = window.open('', '_blank')
@@ -315,7 +324,21 @@ export default function TeacherClassroomPage() {
                 Print/Export Student Work
               </button>
             )}
+            </div>
           </div>
+
+          {showTutorial && (
+            <div className="bg-blue-50 border-t border-blue-100 p-4 text-sm text-gray-800 space-y-3">
+              <h3 className="font-bold text-gray-900">How to use this classroom</h3>
+              <ul className="list-disc list-inside space-y-2 max-w-2xl">
+                <li><strong>Tools:</strong> There are tools available for selection which students will have access to.</li>
+                <li><strong>Research links:</strong> Research links will be pushed to students under the &quot;Research&quot; tab, allowing them access to teacher-approved links.</li>
+                <li><strong>Student Questions:</strong> Student questions will appear here.</li>
+                <li><strong>Groups:</strong> Groups can be formed in this section.</li>
+                <li><strong>Curriculum:</strong> There are pre-created project ideas integrated from the GA Education Standards here.</li>
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 flex">

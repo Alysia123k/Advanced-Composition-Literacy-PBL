@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClassroomByCode, addStudent, getAllClassrooms } from '@/lib/store'
+import { getClassroomByCode, addStudent, getAllClassrooms, MAX_STUDENTS } from '@/lib/store'
 import { handleApiProxy } from '@/lib/api-proxy'
 
 declare global {
@@ -36,6 +36,12 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           error: 'Invalid join code. Please check the code and try again.',
         }, { status: 404 })
+      }
+
+      if (classroom.students.length >= MAX_STUDENTS) {
+        return NextResponse.json({
+          error: `This classroom is full. Maximum ${MAX_STUDENTS} students allowed.`,
+        }, { status: 403 })
       }
 
       console.log('[API] Classroom found:', classroom.classroomId)

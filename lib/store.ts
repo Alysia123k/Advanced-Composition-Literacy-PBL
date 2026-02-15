@@ -6,6 +6,9 @@ import path from 'path'
 // File path for persistence
 const STORE_FILE = path.join(process.cwd(), 'classrooms.json')
 
+// Maximum students per classroom (supports at least 40, up to 100+ for Vercel/multi-student)
+export const MAX_STUDENTS = 100
+
 // File-based storage - read/write on every operation for multi-instance support
 let classroomsCache: Map<string, Classroom> | null = null
 let cacheTimestamp = 0
@@ -117,6 +120,8 @@ export function addStudent(classroomId: string, studentName: string): Student | 
   const classrooms = loadClassrooms()
   const classroom = classrooms.get(classroomId)
   if (!classroom) return null
+
+  if (classroom.students.length >= MAX_STUDENTS) return null
 
   // Check for duplicate names
   if (classroom.students.some((s: Student) => s.name.toLowerCase() === studentName.toLowerCase())) {
