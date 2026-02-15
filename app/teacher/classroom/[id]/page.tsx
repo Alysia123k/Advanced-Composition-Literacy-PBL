@@ -373,7 +373,7 @@ export default function TeacherClassroomPage() {
               <>
                 <div className="relative">
                   {tutorialStep === 1 && (
-                    <div className="absolute top-0 right-0 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                    <div className="absolute top-4 right-4 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
                       <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 1 of 5</div>
                       <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[0].title}</div>
                       <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[0].text}</p>
@@ -453,7 +453,7 @@ export default function TeacherClassroomPage() {
             {activeTab === 'curriculum' && (
               <div className="relative">
                 {tutorialStep === 5 && (
-                  <div className="absolute top-0 right-0 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                  <div className="absolute top-4 right-4 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
                     <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 5 of 5</div>
                     <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[4].title}</div>
                     <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[4].text}</p>
@@ -471,7 +471,7 @@ export default function TeacherClassroomPage() {
           <div className="w-80 bg-white border-l p-4 space-y-4 overflow-y-auto">
             <div className="relative">
               {tutorialStep === 4 && (
-                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                <div className="absolute top-4 right-4 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
                   <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 4 of 5</div>
                   <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[3].title}</div>
                   <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[3].text}</p>
@@ -489,7 +489,7 @@ export default function TeacherClassroomPage() {
             </div>
             <div className="relative">
               {tutorialStep === 2 && (
-                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                <div className="absolute top-4 right-4 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
                   <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 2 of 5</div>
                   <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[1].title}</div>
                   <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[1].text}</p>
@@ -507,7 +507,7 @@ export default function TeacherClassroomPage() {
             </div>
             <div className="relative">
               {tutorialStep === 3 && (
-                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                <div className="absolute top-4 right-4 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
                   <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 3 of 5</div>
                   <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[2].title}</div>
                   <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[2].text}</p>
