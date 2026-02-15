@@ -67,5 +67,6 @@ export type ToolType =
   | 'drawing'
   | 'questions'
   | 'vennDiagram'
+  | 'graph'
 
 

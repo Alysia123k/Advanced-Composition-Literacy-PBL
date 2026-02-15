@@ -56,6 +56,12 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
                   data={student.responses.vennDiagram}
                 />
               )
+            case 'graph':
+              return (
+                <div key={toolType} className="text-sm text-gray-500 italic">
+                  Graph tool — student uses Desmos in their Activities tab.
+                </div>
+              )
             default:
               return null
           }

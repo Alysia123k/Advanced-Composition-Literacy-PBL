@@ -3,52 +3,51 @@ import { v4 as uuidv4 } from 'uuid'
 import fs from 'fs'
 import path from 'path'
 
-// File path for persistence
+// File path for persistence (used only when writable, e.g. local dev)
 const STORE_FILE = path.join(process.cwd(), 'classrooms.json')
 
 // Maximum students per classroom (supports at least 40, up to 100+ for Vercel/multi-student)
 export const MAX_STUDENTS = 100
 
-// File-based storage - read/write on every operation for multi-instance support
-let classroomsCache: Map<string, Classroom> | null = null
-let cacheTimestamp = 0
-const CACHE_DURATION = 1000 // 1 second cache
-
-// Load classrooms from file
-function loadClassrooms(): Map<string, Classroom> {
-  const now = Date.now()
-  if (classroomsCache && (now - cacheTimestamp) < CACHE_DURATION) {
-    return classroomsCache
-  }
-
-  const classrooms = new Map<string, Classroom>()
-  try {
-    if (fs.existsSync(STORE_FILE)) {
-      const data = fs.readFileSync(STORE_FILE, 'utf8')
-      const classroomsData = JSON.parse(data)
-      for (const [id, classroom] of Object.entries(classroomsData)) {
-        classrooms.set(id, classroom as Classroom)
-      }
-      console.log(`[Store] Loaded ${classrooms.size} classrooms from file`)
-    }
-  } catch (error) {
-    console.error('[Store] Error loading classrooms:', error)
-  }
-
-  classroomsCache = classrooms
-  cacheTimestamp = now
-  return classrooms
+// Global in-memory store so Vercel serverless reuses the same data across requests in a worker.
+// On Vercel the filesystem is read-only, so we rely on this; file is used only when writable.
+declare global {
+  // eslint-disable-next-line no-var
+  var __classroomsStore: Map<string, Classroom> | undefined
 }
 
-// Save classrooms to file
+function getGlobalStore(): Map<string, Classroom> {
+  if (typeof globalThis.__classroomsStore === 'undefined') {
+    globalThis.__classroomsStore = new Map<string, Classroom>()
+    // Seed from file once if it exists (e.g. local dev)
+    try {
+      if (fs.existsSync(STORE_FILE)) {
+        const data = fs.readFileSync(STORE_FILE, 'utf8')
+        const classroomsData = JSON.parse(data)
+        for (const [id, classroom] of Object.entries(classroomsData)) {
+          globalThis.__classroomsStore.set(id, classroom as Classroom)
+        }
+        console.log('[Store] Seeded from file:', globalThis.__classroomsStore.size, 'classrooms')
+      }
+    } catch (e) {
+      console.error('[Store] Error seeding from file:', e)
+    }
+  }
+  return globalThis.__classroomsStore
+}
+
+// Load classrooms (always returns the same global map)
+function loadClassrooms(): Map<string, Classroom> {
+  return getGlobalStore()
+}
+
+// Save: keep in-memory (already in global map); try to persist to file (fails on Vercel, ok)
 function saveClassrooms(classrooms: Map<string, Classroom>) {
   try {
     const classroomsData = Object.fromEntries(classrooms)
     fs.writeFileSync(STORE_FILE, JSON.stringify(classroomsData, null, 2))
-    classroomsCache = new Map(classrooms) // Update cache
-    cacheTimestamp = Date.now()
   } catch (error) {
-    console.error('[Store] Error saving classrooms:', error)
+    // Expected on Vercel (read-only fs); in-memory store is still used
   }
 }
 

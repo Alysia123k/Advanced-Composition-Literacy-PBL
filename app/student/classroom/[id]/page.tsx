@@ -204,6 +204,23 @@ export default function StudentClassroomPage() {
                         onUpdate={(data) => handleResponseUpdate('vennDiagram', data)}
                       />
                     )
+                  case 'graph':
+                    return (
+                      <div key={toolType} className="bg-white rounded-lg shadow-md p-4">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Graph (Desmos Calculator)</h2>
+                        <div className="border-2 border-gray-200 rounded-lg overflow-hidden bg-white" style={{ minHeight: '500px' }}>
+                          <iframe
+                            title="Desmos Graphing Calculator"
+                            src="https://www.desmos.com/calculator"
+                            className="w-full h-[500px] border-0"
+                            allow="fullscreen"
+                          />
+                        </div>
+                        <p className="mt-2 text-sm text-gray-500">
+                          Use the <a href="https://www.desmos.com/calculator" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Desmos graphing calculator</a> above, or open it in a new tab if needed.
+                        </p>
+                      </div>
+                    )
                   default:
                     return null
                 }
