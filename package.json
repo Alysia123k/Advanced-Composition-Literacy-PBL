@@ -22,17 +22,10 @@
     "@types/react-dom": "^18.2.0",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.16",
-<<<<<<< HEAD
-=======
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
->>>>>>> master
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2"
   }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> master
