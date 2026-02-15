@@ -21,8 +21,16 @@ export default function TeacherClassroomPage() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'tools' | 'curriculum'>('tools')
-  const [showTutorial, setShowTutorial] = useState(false)
+  const [tutorialStep, setTutorialStep] = useState(0) // 0 = off, 1–5 = step
   const hasLoadedOnceRef = useRef(false)
+
+  const TUTORIAL_STEPS = [
+    { title: 'Tools', text: 'There are tools available for selection which students will have access to.' },
+    { title: 'Research links', text: 'Research links will be pushed to students under the "Research" tab, allowing them access to teacher-approved links.' },
+    { title: 'Student Questions', text: 'Student questions will appear here.' },
+    { title: 'Groups', text: 'Groups can be formed in this section.' },
+    { title: 'Curriculum', text: 'There are pre-created project ideas integrated from the GA Education Standards here.' },
+  ]
 
   useEffect(() => {
     const loadClassroom = async (isInitialLoad: boolean) => {
@@ -207,10 +215,13 @@ export default function TeacherClassroomPage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setShowTutorial((v) => !v)}
+                onClick={() => {
+                  setTutorialStep(1)
+                  setActiveTab('tools')
+                }}
                 className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 font-medium text-sm"
               >
-                {showTutorial ? 'Hide Tutorial' : 'Tutorial'}
+                Tutorial
               </button>
               {selectedStudent && (
               <button
@@ -327,19 +338,7 @@ export default function TeacherClassroomPage() {
             </div>
           </div>
 
-          {showTutorial && (
-            <div className="bg-blue-50 border-t border-blue-100 p-4 text-sm text-gray-800 space-y-3">
-              <h3 className="font-bold text-gray-900">How to use this classroom</h3>
-              <ul className="list-disc list-inside space-y-2 max-w-2xl">
-                <li><strong>Tools:</strong> There are tools available for selection which students will have access to.</li>
-                <li><strong>Research links:</strong> Research links will be pushed to students under the &quot;Research&quot; tab, allowing them access to teacher-approved links.</li>
-                <li><strong>Student Questions:</strong> Student questions will appear here.</li>
-                <li><strong>Groups:</strong> Groups can be formed in this section.</li>
-                <li><strong>Curriculum:</strong> There are pre-created project ideas integrated from the GA Education Standards here.</li>
-              </ul>
-            </div>
-          )}
-        </div>
+          </div>
 
         <div className="flex-1 flex">
           <div className="flex-1 p-6 space-y-6">
@@ -372,10 +371,23 @@ export default function TeacherClassroomPage() {
             {/* Tab Content */}
             {activeTab === 'tools' && (
               <>
-                <ToolSelector
-                  activeTools={classroom.activeTools}
-                  onToggleTool={handleToggleTool}
-                />
+                <div className="relative">
+                  {tutorialStep === 1 && (
+                    <div className="absolute top-0 right-0 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                      <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 1 of 5</div>
+                      <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[0].title}</div>
+                      <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[0].text}</p>
+                      <div className="flex justify-end gap-2">
+                        <button type="button" onClick={() => setTutorialStep(0)} className="text-sm text-gray-500 hover:text-gray-700">Close</button>
+                        <button type="button" onClick={() => setTutorialStep(2)} className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Next</button>
+                      </div>
+                    </div>
+                  )}
+                  <ToolSelector
+                    activeTools={classroom.activeTools}
+                    onToggleTool={handleToggleTool}
+                  />
+                </div>
 
                 {classroom.activeTools.includes('questions') && (
                   <QuestionsManager
@@ -439,25 +451,76 @@ export default function TeacherClassroomPage() {
             )}
 
             {activeTab === 'curriculum' && (
-              <CurriculumManager />
+              <div className="relative">
+                {tutorialStep === 5 && (
+                  <div className="absolute top-0 right-0 z-20 w-80 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                    <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 5 of 5</div>
+                    <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[4].title}</div>
+                    <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[4].text}</p>
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => setTutorialStep(4)} className="text-sm text-gray-500 hover:text-gray-700">Previous</button>
+                      <button type="button" onClick={() => setTutorialStep(0)} className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Finish</button>
+                    </div>
+                  </div>
+                )}
+                <CurriculumManager />
+              </div>
             )}
           </div>
 
           <div className="w-80 bg-white border-l p-4 space-y-4 overflow-y-auto">
-            <GroupManager
-              classroomId={classroomId}
-              students={classroom.students}
-              groups={classroom.groups}
-            />
-            <ResearchManager
-              researchLinks={classroom.researchLinks}
-              onAddLink={handleAddResearchLink}
-              onRemoveLink={handleRemoveResearchLink}
-            />
-            <PrivateQuestions
-              students={classroom.students}
-              classroom={classroom}
-              onAnswerQuestion={async (studentId, questionId, answer) => {
+            <div className="relative">
+              {tutorialStep === 4 && (
+                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                  <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 4 of 5</div>
+                  <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[3].title}</div>
+                  <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[3].text}</p>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setTutorialStep(3)} className="text-sm text-gray-500 hover:text-gray-700">Previous</button>
+                    <button type="button" onClick={() => { setTutorialStep(5); setActiveTab('curriculum') }} className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Next</button>
+                  </div>
+                </div>
+              )}
+              <GroupManager
+                classroomId={classroomId}
+                students={classroom.students}
+                groups={classroom.groups}
+              />
+            </div>
+            <div className="relative">
+              {tutorialStep === 2 && (
+                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                  <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 2 of 5</div>
+                  <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[1].title}</div>
+                  <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[1].text}</p>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setTutorialStep(1)} className="text-sm text-gray-500 hover:text-gray-700">Previous</button>
+                    <button type="button" onClick={() => setTutorialStep(3)} className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Next</button>
+                  </div>
+                </div>
+              )}
+              <ResearchManager
+                researchLinks={classroom.researchLinks}
+                onAddLink={handleAddResearchLink}
+                onRemoveLink={handleRemoveResearchLink}
+              />
+            </div>
+            <div className="relative">
+              {tutorialStep === 3 && (
+                <div className="absolute top-0 right-0 z-20 w-72 rounded-lg border-2 border-blue-500 bg-white p-4 shadow-lg">
+                  <div className="mb-2 text-xs font-bold text-blue-600">Tutorial 3 of 5</div>
+                  <div className="mb-3 text-sm font-semibold text-gray-900">{TUTORIAL_STEPS[2].title}</div>
+                  <p className="mb-4 text-sm text-gray-700">{TUTORIAL_STEPS[2].text}</p>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setTutorialStep(2)} className="text-sm text-gray-500 hover:text-gray-700">Previous</button>
+                    <button type="button" onClick={() => setTutorialStep(4)} className="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">Next</button>
+                  </div>
+                </div>
+              )}
+              <PrivateQuestions
+                students={classroom.students}
+                classroom={classroom}
+                onAnswerQuestion={async (studentId, questionId, answer) => {
                 try {
                   const response = await fetch(`/api/classroom/${classroomId}/question`, {
                     method: 'POST',
@@ -477,7 +540,8 @@ export default function TeacherClassroomPage() {
                   console.error('Failed to answer question:', error)
                 }
               }}
-            />
+              />
+            </div>
           </div>
         </div>
       </div>
