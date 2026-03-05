@@ -39,7 +39,7 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
               return (
                 <DrawingViewer
                   key={toolType}
-                  imageData={student.responses.drawing}
+                  imageData={typeof student.responses.drawing === 'string' ? { image: student.responses.drawing } : student.responses.drawing}
                 />
               )
             case 'questions':

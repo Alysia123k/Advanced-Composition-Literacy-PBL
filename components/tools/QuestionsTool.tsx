@@ -1,19 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-<<<<<<< HEAD
-import { Student } from '@/lib/types'
-
-interface QuestionsToolProps {
-  student: Student
-  classroom: any // Add classroom prop to access teacher questions
-=======
 import { Student, Classroom, ClassroomQuestion } from '@/lib/types'
 
 interface QuestionsToolProps {
   student: Student
   classroom: Classroom
->>>>>>> master
   onUpdate: (data: any) => void
 }
 
@@ -35,11 +27,7 @@ export default function QuestionsTool({ student, classroom, onUpdate }: Question
 
     // Preserve existing student questions (private questions to teacher)
     const existingStudentQuestions = (student.responses.questions || []).filter(
-<<<<<<< HEAD
-      (q: any) => !classroom.questions.some(tq => tq.id === q.id)
-=======
       (q: any) => !classroom.questions.some((tq: ClassroomQuestion) => tq.id === q.id)
->>>>>>> master
     )
 
     // Update student responses - merge teacher questions with existing student questions
@@ -84,8 +72,3 @@ export default function QuestionsTool({ student, classroom, onUpdate }: Question
     </div>
   )
 }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master
