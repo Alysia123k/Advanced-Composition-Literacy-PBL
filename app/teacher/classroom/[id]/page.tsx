@@ -316,6 +316,8 @@ export default function TeacherClassroomPage() {
             </div>
           </div>
 
+        </div>
+
         <div className="flex-1 flex">
           <div className="flex-1 p-6 space-y-6">
             {/* Tab Navigation */}
