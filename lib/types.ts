@@ -19,25 +19,16 @@ export interface Student {
       }>
       groupMembers: string[]
     }
-<<<<<<< HEAD
-    drawing?: string // base64 image data
-=======
     drawing?: {
       image: string // base64 image data
       comment?: string
     }
->>>>>>> master
     questions?: Array<{
       id: string
       question: string
       answer?: string
       timestamp: number
     }>
-<<<<<<< HEAD
-  }
-}
-
-=======
     vennDiagram?: {
       leftLabel: string
       rightLabel: string
@@ -56,7 +47,6 @@ export interface ClassroomQuestion {
   timestamp: number
 }
 
->>>>>>> master
 export interface Classroom {
   classroomId: string
   teacherName: string
@@ -68,29 +58,13 @@ export interface Classroom {
     studentIds: string[]
   }>
   researchLinks: string[]
-<<<<<<< HEAD
-  questions: Array<{
-    id: string
-    question: string
-    timestamp: number
-  }>
-}
-
-export type ToolType = 
-=======
   questions: ClassroomQuestion[]
 }
 
 export type ToolType =
->>>>>>> master
   | 'designThinking'
   | 'decisionMatrix'
   | 'drawing'
   | 'questions'
-<<<<<<< HEAD
-=======
   | 'vennDiagram'
   | 'graph'
->>>>>>> master
-
-

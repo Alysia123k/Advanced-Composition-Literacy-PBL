@@ -262,13 +262,16 @@ export default function TeacherClassroomPage() {
                     }
                     
                     if (selectedStudent.responses.drawing) {
+                      const drawingData = typeof selectedStudent.responses.drawing === 'string'
+                        ? { image: selectedStudent.responses.drawing }
+                        : selectedStudent.responses.drawing
                       content += `
                         <div class="section">
                           <h2>Drawing</h2>
-                          <img src="${selectedStudent.responses.drawing.image}" alt="Student drawing" />
+                          <img src="${drawingData.image}" alt="Student drawing" />
                       `
-                      if (selectedStudent.responses.drawing.comment) {
-                        content += `<p><strong>Comment:</strong> ${selectedStudent.responses.drawing.comment}</p>`
+                      if (drawingData.comment) {
+                        content += `<p><strong>Comment:</strong> ${drawingData.comment}</p>`
                       }
                       content += `</div>`
                     }
