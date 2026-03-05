@@ -5,10 +5,7 @@ import DesignThinkingViewer from '@/components/tools/DesignThinkingViewer'
 import DecisionMatrixViewer from '@/components/tools/DecisionMatrixViewer'
 import DrawingViewer from '@/components/tools/DrawingViewer'
 import QuestionsViewer from '@/components/tools/QuestionsViewer'
-<<<<<<< HEAD
-=======
 import VennDiagramViewer from '@/components/tools/VennDiagramViewer'
->>>>>>> master
 
 interface StudentViewerProps {
   student: Student
@@ -19,11 +16,7 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
-<<<<<<< HEAD
         {student.name}'s Responses
-=======
-        {student.name}&#39;s Responses
->>>>>>> master
       </h2>
       <div className="space-y-6">
         {activeTools.map((toolType) => {
@@ -56,8 +49,6 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
                   questions={student.responses.questions}
                 />
               )
-<<<<<<< HEAD
-=======
             case 'vennDiagram':
               return (
                 <VennDiagramViewer
@@ -71,7 +62,6 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
                   Graph tool — student uses Desmos in their Activities tab.
                 </div>
               )
->>>>>>> master
             default:
               return null
           }
@@ -85,8 +75,3 @@ export default function StudentViewer({ student, activeTools }: StudentViewerPro
     </div>
   )
 }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master

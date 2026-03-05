@@ -8,10 +8,7 @@ import DesignThinkingTool from '@/components/tools/DesignThinkingTool'
 import DecisionMatrixTool from '@/components/tools/DecisionMatrixTool'
 import DrawingTool from '@/components/tools/DrawingTool'
 import QuestionsTool from '@/components/tools/QuestionsTool'
-<<<<<<< HEAD
-=======
 import VennDiagramTool from '@/components/tools/VennDiagramTool'
->>>>>>> master
 import ResearchTab from '@/components/ResearchTab'
 import PrivateQuestionBox from '@/components/PrivateQuestionBox'
 
@@ -20,7 +17,7 @@ export default function StudentClassroomPage() {
   const searchParams = useSearchParams()
   const classroomId = params.id as string
   const studentId = searchParams.get('studentId')
-  
+
   const [classroom, setClassroom] = useState<Classroom | null>(null)
   const [student, setStudent] = useState<Student | null>(null)
   const [activeTab, setActiveTab] = useState<'activities' | 'research'>('activities')
@@ -45,11 +42,7 @@ export default function StudentClassroomPage() {
     }
 
     loadData()
-<<<<<<< HEAD
-    const interval = setInterval(loadData, 1000)
-=======
     const interval = setInterval(loadData, 2000)
->>>>>>> master
 
     const socket = getSocket()
     socket.emit('join-classroom', { classroomId, role: 'student', studentId })
@@ -203,8 +196,6 @@ export default function StudentClassroomPage() {
                         onUpdate={(data) => handleResponseUpdate('questions', data)}
                       />
                     )
-<<<<<<< HEAD
-=======
                   case 'vennDiagram':
                     return (
                       <VennDiagramTool
@@ -230,7 +221,6 @@ export default function StudentClassroomPage() {
                         </p>
                       </div>
                     )
->>>>>>> master
                   default:
                     return null
                 }

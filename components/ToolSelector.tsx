@@ -28,8 +28,6 @@ const tools: Array<{ id: ToolType; name: string; description: string }> = [
     name: 'Questions',
     description: 'Teacher questions and student responses',
   },
-<<<<<<< HEAD
-=======
   {
     id: 'vennDiagram',
     name: 'Venn Diagram',
@@ -40,7 +38,6 @@ const tools: Array<{ id: ToolType; name: string; description: string }> = [
     name: 'Graph (Desmos)',
     description: 'Desmos graphing calculator embedded in the page',
   },
->>>>>>> master
 ]
 
 export default function ToolSelector({ activeTools, onToggleTool }: ToolSelectorProps) {
@@ -76,5 +73,3 @@ export default function ToolSelector({ activeTools, onToggleTool }: ToolSelector
     </div>
   )
 }
-
-
