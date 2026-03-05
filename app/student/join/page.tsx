@@ -13,7 +13,7 @@ export default function StudentJoinPage() {
 
   const handleJoin = async () => {
     setError('')
-    
+
     if (!joinCode.trim() || !studentName.trim()) {
       setError('Please enter both join code and your name')
       return
@@ -29,14 +29,14 @@ export default function StudentJoinPage() {
           studentName: studentName.trim(),
         }),
       })
-      
+
       if (!response.ok) {
         const data = await response.json()
         setError(data.error || 'Failed to join classroom')
         setIsJoining(false)
         return
       }
-      
+
       const { classroom, student } = await response.json()
 
       // Join socket room
@@ -46,10 +46,7 @@ export default function StudentJoinPage() {
         role: 'student',
         studentId: student.studentId,
       })
-<<<<<<< HEAD
       socket.emit('student-joined', { classroomId: classroom.classroomId })
-=======
->>>>>>> master
 
       router.push(`/student/classroom/${classroom.classroomId}?studentId=${student.studentId}`)
     } catch (error) {
@@ -108,7 +105,3 @@ export default function StudentJoinPage() {
     </div>
   )
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> master
