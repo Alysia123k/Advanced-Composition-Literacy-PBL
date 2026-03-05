@@ -44,20 +44,8 @@ export async function POST(
     const classroom = getClassroom(classroomId)
 
     // Emit appropriate socket events
-    if (global.io) {
-      if (action === 'add' || action === 'edit' || action === 'delete') {
-        // Teacher modified questions - notify all clients
-        global.io.to(`classroom-${classroomId}`).emit('question-updated')
-      } else if (action === 'student-question' || (!action && studentId && question)) {
-        // Student asked a question - notify teacher
-        global.io.to(`classroom-${classroomId}`).emit('question-asked', { studentId })
-        global.io.to(`classroom-${classroomId}`).emit('question-updated')
-      } else if (action === 'answer') {
-        // Teacher answered a question - notify the student and all clients
-        global.io.to(`student-${studentId}`).emit('question-answered', { questionId, answer })
-        global.io.to(`classroom-${classroomId}`).emit('question-updated')
-      }
-    }
+    // Note: Socket events disabled for serverless compatibility
+    // In production, real-time updates may not work without persistent connections
 
     return NextResponse.json({ success, classroom })
   })

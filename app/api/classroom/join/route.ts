@@ -53,10 +53,8 @@ export async function POST(request: NextRequest) {
 
       console.log('[API] Student added successfully:', student.studentId)
 
-      // Emit socket event to notify clients of the new student
-      if (global.io) {
-        global.io.to(`classroom-${classroom.classroomId}`).emit('student-list-updated')
-      }
+      // Note: Socket events disabled for serverless compatibility
+      // In production, real-time updates may not work without persistent connections
 
       return NextResponse.json({ classroom, student })
     } catch (error) {

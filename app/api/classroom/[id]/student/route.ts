@@ -24,14 +24,8 @@ export async function POST(
 
     const classroom = getClassroom(classroomId)
 
-    // Emit socket event to notify clients of the update
-    if (global.io) {
-      global.io.to(`classroom-${classroomId}`).emit('response-updated', {
-        studentId,
-        toolType,
-        data,
-      })
-    }
+    // Note: Socket events disabled for serverless compatibility
+    // In production, real-time updates may not work without persistent connections
 
     return NextResponse.json({ success, classroom })
   })
